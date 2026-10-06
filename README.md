@@ -51,11 +51,18 @@ native toolbar to add or remove blocks, reset the camera, or show and hide the
 inspector. The sidebar toggle is in the window toolbar.
 
 The inspector edits the selected part’s name, full local X/Y/Z dimensions, and
-assembly-frame center position. All numeric fields are in meters. Press Return
+assembly-frame center position in meters, plus rotation in degrees. Press Return
 or **Apply** to commit the whole edit; **Revert** discards its draft. Invalid,
 non-finite, non-positive dimensions, or values outside the renderer’s numeric
 range display an error and leave the assembly unchanged. A loaded assembly that
 exceeds render precision reports which parts cannot be displayed.
+
+Rotation applies positive right-hand-rule angles about the fixed assembly X,
+then Y, then Z axes (`R = Rz * Ry * Rx`). The file retains a unit quaternion.
+Equivalent angles are displayed with Y between -90° and +90°; at either limit,
+X is displayed as zero because X and Z are coupled. Editing other fields keeps
+the original quaternion unchanged. Rotation changes update the 3D block and do
+not change its local mass properties.
 
 To build from Terminal:
 
@@ -178,4 +185,11 @@ To check persisted material assignments and the inspector-to-physics calculation
 ```sh
 swiftc MechKit/Physics/*.swift MechKit/AssemblyRecord.swift MechKit/AssemblyDocument.swift MechKit/PartEditing.swift Checks/PartPhysicsChecks.swift -o /tmp/mechkit-part-physics-checks
 /tmp/mechkit-part-physics-checks
+```
+
+To check rotation editing, axis directions, composition, singularities, and persistence:
+
+```sh
+swiftc MechKit/Physics/*.swift MechKit/AssemblyRecord.swift MechKit/AssemblyDocument.swift MechKit/PartEditing.swift Checks/RotationChecks.swift -o /tmp/mechkit-rotation-checks
+/tmp/mechkit-rotation-checks
 ```

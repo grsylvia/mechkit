@@ -26,6 +26,14 @@ struct PartInspector: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+            Section("Rotation (°)") {
+                VectorFields(vector: $draft.rotationDegrees)
+                Text(
+                    "Fixed assembly axes: X, then Y, then Z. Positive angles follow the right-hand rule."
+                )
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
             Section("Material") {
                 Toggle("Assign Material", isOn: $draft.material.isAssigned)
                 if draft.material.isAssigned {

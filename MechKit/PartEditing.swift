@@ -6,12 +6,14 @@ struct PartDraft: Equatable {
     var name: String
     var dimensions: VectorDraft
     var position: VectorDraft
+    var rotationDegrees: VectorDraft
     var material: MaterialDraft
 
     init(part: PartRecord) {
         name = part.name
         dimensions = VectorDraft(part.dimensionsMeters)
         position = VectorDraft(part.positionMeters)
+        rotationDegrees = VectorDraft(PartRotation.degrees(from: part.orientationLocalToAssembly))
         material = MaterialDraft(part.material)
     }
 
@@ -20,6 +22,13 @@ struct PartDraft: Equatable {
         result.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
         result.dimensionsMeters = try dimensions.value(label: "Dimensions")
         result.positionMeters = try position.value(label: "Position")
+        // Preserve the exact stored quaternion when only other properties are edited.
+        if rotationDegrees
+            != VectorDraft(PartRotation.degrees(from: part.orientationLocalToAssembly))
+        {
+            result.orientationLocalToAssembly = try PartRotation.orientation(
+                fromDegrees: rotationDegrees.value(label: "Rotation", unit: "degrees"))
+        }
         result.material = try material.value()
         try result.validate()
         _ = try PartRenderValues(part: result)
@@ -63,11 +72,11 @@ struct VectorDraft: Equatable {
         z = String(value.z)
     }
 
-    func value(label: String) throws -> Vector3Record {
+    func value(label: String, unit: String = "meters") throws -> Vector3Record {
         guard let x = Double(x), let y = Double(y), let z = Double(z),
             x.isFinite, y.isFinite, z.isFinite
         else {
-            throw PartEditingError.invalid("\(label) must contain finite numbers in meters.")
+            throw PartEditingError.invalid("\(label) must contain finite numbers in \(unit).")
         }
         return Vector3Record(x: x, y: y, z: z)
     }
@@ -127,5 +136,44 @@ enum PartEditingError: LocalizedError {
         switch self {
         case .invalid(let message): return message
         }
+    }
+}
+
+/// Right-handed rotations about fixed assembly X, then Y, then Z: R = Rz * Ry * Rx.
+/// Degrees are an editing representation; unit quaternions remain the saved representation.
+enum PartRotation {
+    static func orientation(fromDegrees degrees: Vector3Record) throws -> QuaternionRecord {
+        guard degrees.isFinite else {
+            throw PartEditingError.invalid("Rotation must contain finite numbers in degrees.")
+        }
+        func radians(_ degrees: Double) -> Double {
+            degrees.truncatingRemainder(dividingBy: 360) * (.pi / 180)
+        }
+        let x = simd_quatd(angle: radians(degrees.x), axis: SIMD3(1, 0, 0))
+        let y = simd_quatd(angle: radians(degrees.y), axis: SIMD3(0, 1, 0))
+        let z = simd_quatd(angle: radians(degrees.z), axis: SIMD3(0, 0, 1))
+        let vector = (z * y * x).normalized.vector
+        return QuaternionRecord(x: vector.x, y: vector.y, z: vector.z, w: vector.w)
+    }
+
+    static func degrees(from orientation: QuaternionRecord) -> Vector3Record {
+        let q = simd_quatd(
+            vector: SIMD4(orientation.x, orientation.y, orientation.z, orientation.w)
+        )
+        .normalized
+        let matrix = simd_double3x3(q)
+        let cosinePitch = hypot(matrix[0][0], matrix[0][1])
+        let pitch = atan2(-matrix[0][2], cosinePitch)
+        let roll: Double
+        let yaw: Double
+        if cosinePitch > 1e-12 {
+            roll = atan2(matrix[1][2], matrix[2][2])
+            yaw = atan2(matrix[0][1], matrix[0][0])
+        } else {
+            // At ±90° pitch, roll and yaw are coupled. Choose roll = 0 canonically.
+            roll = 0
+            yaw = atan2(-matrix[1][0], matrix[1][1])
+        }
+        return Vector3Record(x: roll * (180 / .pi), y: pitch * (180 / .pi), z: yaw * (180 / .pi))
     }
 }
