@@ -23,12 +23,15 @@ struct ContentView: View {
                         .tag(part.id)
                 }
             }
+            .contentMargins(.horizontal, UISpacing.contentMargin, for: .scrollContent)
             .navigationTitle("Parts")
             .navigationSplitViewColumnWidth(min: 160, ideal: 200, max: 280)
             .overlay {
                 if assembly.parts.isEmpty {
                     ContentUnavailableView(
-                        "No Parts", systemImage: "cube", description: Text("Add a block to begin."))
+                        "No Parts", systemImage: "cube", description: Text("Add a block to begin.")
+                    )
+                    .padding(UISpacing.contentMargin)
                 }
             }
         } detail: {
@@ -44,6 +47,7 @@ struct ContentView: View {
                     "Select a Part", systemImage: "cube",
                     description: Text("Choose a part in the sidebar to edit it.")
                 )
+                .padding(UISpacing.contentMargin)
                 .inspectorColumnWidth(min: 260, ideal: 300, max: 360)
             }
         }
@@ -145,21 +149,21 @@ struct ContentView: View {
         }
         .overlay(alignment: .topLeading) {
             if !renderingErrors.isEmpty {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: UISpacing.messageGap) {
                     Label("Some parts cannot be displayed", systemImage: "exclamationmark.triangle")
                         .font(.headline)
                     ForEach(Array(renderingErrors.enumerated()), id: \.offset) { error in
                         Text(error.element).font(.caption)
                     }
                 }
-                .padding(12)
+                .padding(UISpacing.containerPadding)
                 .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
-                .padding(12)
+                .padding(UISpacing.contentMargin)
             }
         }
         .overlay(alignment: .bottomLeading) {
             CoordinateIndicator(cameraState: cameraState) { cameraState.setView($0) }
-                .padding(12)
+                .padding(UISpacing.contentMargin)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .frame(minWidth: 400, minHeight: 300)

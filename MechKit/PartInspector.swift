@@ -5,6 +5,12 @@ struct PartInspector: View {
     let apply: (PartRecord) -> Void
     @State private var draft: PartDraft
     @State private var errorMessage: String?
+    @AppStorage(MaterialNumberFormat.preferenceKey)
+    private var storedSignificantFigures = MaterialNumberFormat.defaultSignificantFigures
+
+    private var significantFigures: Int {
+        MaterialNumberFormat.significantFigures(storedSignificantFigures)
+    }
 
     init(part: PartRecord, apply: @escaping (PartRecord) -> Void) {
         self.part = part
@@ -38,12 +44,24 @@ struct PartInspector: View {
                 Toggle("Assign Material", isOn: $draft.material.isAssigned)
                 if draft.material.isAssigned {
                     TextField("Name", text: $draft.material.name)
-                    TextField("Density (kg/m³)", text: $draft.material.densityKgPerCubicMeter)
+                    DensityField(
+                        text: $draft.material.densityKgPerCubicMeter,
+                        significantFigures: significantFigures)
                     TextField("Source", text: $draft.material.source)
                 }
             }
             Section("Mass Properties") {
-                MassPropertiesReadout(part: part)
+                Picker(
+                    "Significant figures",
+                    selection: Binding(
+                        get: { significantFigures },
+                        set: { storedSignificantFigures = $0 })
+                ) {
+                    ForEach(MaterialNumberFormat.allowedSignificantFigures, id: \.self) { digits in
+                        Text("\(digits)").tag(digits)
+                    }
+                }
+                MassPropertiesReadout(part: part, significantFigures: significantFigures)
             }
             Section {
                 if let errorMessage {
@@ -51,7 +69,7 @@ struct PartInspector: View {
                         .foregroundStyle(.red)
                         .accessibilityLabel(errorMessage)
                 }
-                HStack {
+                HStack(spacing: UISpacing.controlGap) {
                     Button("Revert") { resetDraft() }
                     Spacer()
                     Button("Apply", action: submit)
@@ -60,6 +78,7 @@ struct PartInspector: View {
             }
         }
         .formStyle(.grouped)
+        .contentMargins(.horizontal, UISpacing.contentMargin, for: .scrollContent)
         .onSubmit(submit)
         .onChange(of: part) { _, _ in resetDraft() }
     }
@@ -91,19 +110,43 @@ private struct VectorFields: View {
     }
 }
 
+private struct DensityField: View {
+    @Binding var text: String
+    let significantFigures: Int
+    @FocusState private var isEditing: Bool
+
+    var body: some View {
+        TextField(
+            "Density (kg/m³)",
+            text: Binding(
+                get: {
+                    MaterialNumberFormat.densityText(
+                        text, isEditing: isEditing, significantFigures: significantFigures)
+                },
+                set: { text = $0 })
+        )
+        .focused($isEditing)
+    }
+}
+
 private struct MassPropertiesReadout: View {
     let part: PartRecord
+    let significantFigures: Int
+
+    private func formatted(_ value: Double) -> String {
+        MaterialNumberFormat.string(value, significantFigures: significantFigures)
+    }
 
     var body: some View {
         let result = Result { try part.massProperties }
         switch result {
         case .success(let properties?):
-            LabeledContent("Volume (m³)", value: String(properties.volumeCubicMeters))
-            LabeledContent("Mass (kg)", value: String(properties.massKilograms))
+            LabeledContent("Volume (m³)", value: formatted(properties.volumeCubicMeters))
+            LabeledContent("Mass (kg)", value: formatted(properties.massKilograms))
             let inertia = properties.inertiaTensorAboutCenterOfMassLocal
-            LabeledContent("Ixx (kg·m²)", value: String(inertia.xxKgMetersSquared))
-            LabeledContent("Iyy (kg·m²)", value: String(inertia.yyKgMetersSquared))
-            LabeledContent("Izz (kg·m²)", value: String(inertia.zzKgMetersSquared))
+            LabeledContent("Ixx (kg·m²)", value: formatted(inertia.xxKgMetersSquared))
+            LabeledContent("Iyy (kg·m²)", value: formatted(inertia.yyKgMetersSquared))
+            LabeledContent("Izz (kg·m²)", value: formatted(inertia.zzKgMetersSquared))
             Text(
                 "Uniform solid block. Inertia is about the local center of mass; cross terms are zero."
             )

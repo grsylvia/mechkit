@@ -6,7 +6,7 @@ struct CoordinateIndicator: View {
     let selectView: (CameraViewPreset) -> Void
 
     var body: some View {
-        VStack(spacing: 6) {
+        VStack(spacing: UISpacing.controlGap) {
             Canvas { context, size in
                 let center = CGPoint(x: size.width / 2, y: size.height / 2)
                 let planes: [(first: SIMD3<Float>, second: SIMD3<Float>, color: Color)] = [
@@ -89,7 +89,7 @@ struct CoordinateIndicator: View {
             .accessibilityLabel("Coordinate axes: X red, Y green, Z blue. Z is up.")
             .allowsHitTesting(false)
 
-            Grid(horizontalSpacing: 6, verticalSpacing: 6) {
+            Grid(horizontalSpacing: UISpacing.controlGap, verticalSpacing: UISpacing.controlGap) {
                 GridRow {
                     viewButton(.front)
                     viewButton(.top)
@@ -101,7 +101,7 @@ struct CoordinateIndicator: View {
             }
             .controlSize(.mini)
         }
-        .padding(8)
+        .padding(UISpacing.containerPadding)
         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 10))
     }
 

@@ -7,7 +7,7 @@ struct ShortcutEditor: View {
     @State private var recording: ShortcutRecording?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: UISpacing.sectionGap) {
             Text("View Shortcuts").font(.title2.bold())
             Text(
                 "Click a shortcut box, press a key combination, then press Enter to save. Escape cancels."
@@ -15,7 +15,10 @@ struct ShortcutEditor: View {
             .font(.callout)
             .foregroundStyle(.secondary)
 
-            Grid(alignment: .leading, horizontalSpacing: 24, verticalSpacing: 12) {
+            Grid(
+                alignment: .leading, horizontalSpacing: UISpacing.contentMargin,
+                verticalSpacing: UISpacing.controlGap
+            ) {
                 ForEach(CameraViewPreset.allCases) { preset in
                     GridRow {
                         Text(preset.title)
@@ -40,13 +43,13 @@ struct ShortcutEditor: View {
             .foregroundStyle(recording?.error == nil ? Color.secondary : Color.red)
             .frame(minHeight: 32, alignment: .topLeading)
 
-            HStack {
+            HStack(spacing: UISpacing.controlGap) {
                 Spacer()
                 Button("Done") { dismiss() }
                     .disabled(recording != nil)
             }
         }
-        .padding(24)
+        .padding(UISpacing.contentMargin)
         .frame(width: 420)
         .background {
             ShortcutKeyCapture(isRecording: recording != nil) { input in

@@ -173,7 +173,12 @@ Assign a material in the inspector with its name, uniform density in kg/m³, and
 source, then press Apply. Parts start with no assigned material and no mass
 result. The inspector displays volume, mass, and the local principal moments
 about the block center. These values use the same physics calculation described
-above and update when geometry or density is applied. Material data is saved in
+above and update when geometry or density is applied. Choose **Significant figures**
+in the inspector to set display precision from
+1–15 figures (default 3). The preference applies across windows and persists
+across launches. Density shows its full value while editing; changing display
+precision preserves all stored values and calculations. Large and very small
+values use scientific notation. Material data is saved in
 `.mechkit` files; unassigning it removes the mass result. Invalid assignments or
 unrepresentable derived properties reject the whole edit.
 
@@ -192,4 +197,11 @@ To check rotation editing, axis directions, composition, singularities, and pers
 ```sh
 swiftc MechKit/Physics/*.swift MechKit/AssemblyRecord.swift MechKit/AssemblyDocument.swift MechKit/PartEditing.swift Checks/RotationChecks.swift -o /tmp/mechkit-rotation-checks
 /tmp/mechkit-rotation-checks
+```
+
+To check material display precision, preference persistence, and unchanged values:
+
+```sh
+swiftc MechKit/Physics/*.swift MechKit/AssemblyRecord.swift MechKit/AssemblyDocument.swift MechKit/PartEditing.swift MechKit/MaterialNumberFormat.swift Checks/MaterialPrecisionChecks.swift -o /tmp/mechkit-material-precision-checks
+/tmp/mechkit-material-precision-checks
 ```
