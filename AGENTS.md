@@ -29,6 +29,10 @@ architecture, and implementation choices require agreement with the user.
   dependencies. Handle errors explicitly.
 - **Tooling:** Prefer modern, supported macOS tooling and APIs. Backward
   compatibility is not a requirement unless explicitly requested.
+- **Interface design:** Follow Apple's
+  [Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/),
+  especially [Designing for macOS](https://developer.apple.com/design/human-interface-guidelines/designing-for-macos/),
+  when designing and implementing the interface.
 - **Physics:** Define units, coordinate frames, and sign conventions for geometry,
   motion, forces, and torque. Show units in names or types. Validate external
   inputs for ranges and non-finite values (NaN or infinity). Keep mechanical
