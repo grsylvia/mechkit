@@ -1,4 +1,4 @@
-# Mechkit
+# mechkit
 
 A macOS application for assembling mechanical parts in a 3D workspace and
 simulating how their connections produce motion.

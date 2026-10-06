@@ -1,10 +1,11 @@
-# Machine builder — project guidance
+# mechkit — project guidance
 
 This is an early project draft. Update it incrementally as the user makes
 decisions. Proposed features and architecture are not requirements until agreed.
 
 ## Confirmed concept
 
+- The official project and application name is `mechkit`.
 - Build a tool for assembling machines from discrete mechanical parts or mechanisms.
 - Start with an empty workspace on a grid.
 - Provide a selection of mechanisms, including rack and pinion, friction drives,
