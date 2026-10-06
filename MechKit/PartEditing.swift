@@ -6,11 +6,13 @@ struct PartDraft: Equatable {
     var name: String
     var dimensions: VectorDraft
     var position: VectorDraft
+    var material: MaterialDraft
 
     init(part: PartRecord) {
         name = part.name
         dimensions = VectorDraft(part.dimensionsMeters)
         position = VectorDraft(part.positionMeters)
+        material = MaterialDraft(part.material)
     }
 
     func applying(to part: PartRecord) throws -> PartRecord {
@@ -18,9 +20,35 @@ struct PartDraft: Equatable {
         result.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
         result.dimensionsMeters = try dimensions.value(label: "Dimensions")
         result.positionMeters = try position.value(label: "Position")
+        result.material = try material.value()
         try result.validate()
         _ = try PartRenderValues(part: result)
         return result
+    }
+}
+
+struct MaterialDraft: Equatable {
+    var isAssigned: Bool
+    var name: String
+    var densityKgPerCubicMeter: String
+    var source: String
+
+    init(_ material: MaterialRecord?) {
+        isAssigned = material != nil
+        name = material?.name ?? ""
+        densityKgPerCubicMeter = material.map { String($0.densityKgPerCubicMeter) } ?? ""
+        source = material?.source ?? ""
+    }
+
+    func value() throws -> MaterialRecord? {
+        guard isAssigned else { return nil }
+        guard let density = Double(densityKgPerCubicMeter) else {
+            throw PhysicsError.invalidDensity
+        }
+        let material = try Material(name: name, densityKgPerCubicMeter: density, source: source)
+        return MaterialRecord(
+            name: material.name, densityKgPerCubicMeter: material.densityKgPerCubicMeter,
+            source: material.source)
     }
 }
 

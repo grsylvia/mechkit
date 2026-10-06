@@ -80,7 +80,7 @@ swiftc MechKit/CameraState.swift MechKit/ViewShortcuts.swift Checks/ShortcutChec
 To check inspector drafts and the renderer's numeric boundary:
 
 ```sh
-swiftc MechKit/AssemblyRecord.swift MechKit/PartEditing.swift Checks/EditingChecks.swift -o /tmp/mechkit-editing-checks
+swiftc MechKit/Physics/*.swift MechKit/AssemblyRecord.swift MechKit/PartEditing.swift Checks/EditingChecks.swift -o /tmp/mechkit-editing-checks
 /tmp/mechkit-editing-checks
 ```
 
@@ -88,7 +88,7 @@ To check document serialization, independent assembly values, save/reopen, and
 invalid files:
 
 ```sh
-swiftc MechKit/AssemblyRecord.swift MechKit/AssemblyDocument.swift Checks/DocumentChecks.swift -o /tmp/mechkit-document-checks
+swiftc MechKit/Physics/*.swift MechKit/AssemblyRecord.swift MechKit/AssemblyDocument.swift Checks/DocumentChecks.swift -o /tmp/mechkit-document-checks
 /tmp/mechkit-document-checks
 ```
 
@@ -162,5 +162,20 @@ each axis), a 0.2 × 0.3 × 0.4 m block at 500 kg/m³ (0.024 m³, 12 kg, and
 Checks also cover edits, identity, placement independence, input validation,
 quaternion normalization, tensor symmetry, and numerical range failures.
 
+Assign a material in the inspector with its name, uniform density in kg/m³, and
+source, then press Apply. Parts start with no assigned material and no mass
+result. The inspector displays volume, mass, and the local principal moments
+about the block center. These values use the same physics calculation described
+above and update when geometry or density is applied. Material data is saved in
+`.mechkit` files; unassigning it removes the mass result. Invalid assignments or
+unrepresentable derived properties reject the whole edit.
+
 Material sources, licensing, and an import format must be agreed before an
-importer is implemented. Forces, joints, dynamics, and UI integration are deferred.
+importer is implemented. Forces, joints, and dynamics are deferred.
+
+To check persisted material assignments and the inspector-to-physics calculation:
+
+```sh
+swiftc MechKit/Physics/*.swift MechKit/AssemblyRecord.swift MechKit/AssemblyDocument.swift MechKit/PartEditing.swift Checks/PartPhysicsChecks.swift -o /tmp/mechkit-part-physics-checks
+/tmp/mechkit-part-physics-checks
+```

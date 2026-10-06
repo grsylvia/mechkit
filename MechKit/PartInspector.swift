@@ -26,6 +26,17 @@ struct PartInspector: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+            Section("Material") {
+                Toggle("Assign Material", isOn: $draft.material.isAssigned)
+                if draft.material.isAssigned {
+                    TextField("Name", text: $draft.material.name)
+                    TextField("Density (kg/m³)", text: $draft.material.densityKgPerCubicMeter)
+                    TextField("Source", text: $draft.material.source)
+                }
+            }
+            Section("Mass Properties") {
+                MassPropertiesReadout(part: part)
+            }
             Section {
                 if let errorMessage {
                     Label(errorMessage, systemImage: "exclamationmark.triangle")
@@ -69,5 +80,33 @@ private struct VectorFields: View {
         TextField("X", text: $vector.x)
         TextField("Y", text: $vector.y)
         TextField("Z", text: $vector.z)
+    }
+}
+
+private struct MassPropertiesReadout: View {
+    let part: PartRecord
+
+    var body: some View {
+        let result = Result { try part.massProperties }
+        switch result {
+        case .success(let properties?):
+            LabeledContent("Volume (m³)", value: String(properties.volumeCubicMeters))
+            LabeledContent("Mass (kg)", value: String(properties.massKilograms))
+            let inertia = properties.inertiaTensorAboutCenterOfMassLocal
+            LabeledContent("Ixx (kg·m²)", value: String(inertia.xxKgMetersSquared))
+            LabeledContent("Iyy (kg·m²)", value: String(inertia.yyKgMetersSquared))
+            LabeledContent("Izz (kg·m²)", value: String(inertia.zzKgMetersSquared))
+            Text(
+                "Uniform solid block. Inertia is about the local center of mass; cross terms are zero."
+            )
+            .font(.caption)
+            .foregroundStyle(.secondary)
+        case .success(nil):
+            Text("Assign a material and apply to calculate mass and inertia.")
+                .foregroundStyle(.secondary)
+        case .failure(let error):
+            Label(error.localizedDescription, systemImage: "exclamationmark.triangle")
+                .foregroundStyle(.red)
+        }
     }
 }

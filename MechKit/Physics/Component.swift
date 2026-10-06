@@ -34,7 +34,8 @@ final class Component: Identifiable {
         self.material = material
     }
 
-    private static func calculateMassProperties(geometry: Geometry, material: Material) throws -> MassProperties {
+    // Also used by persistent part records, without constructing a second part identity.
+    static func calculateMassProperties(geometry: Geometry, material: Material) throws -> MassProperties {
         let dimensions = geometry.dimensionsMeters
         let volumeCubicMeters = positiveProduct(dimensions.x, dimensions.y, dimensions.z)
         guard volumeCubicMeters.isFinite, volumeCubicMeters > 0 else {

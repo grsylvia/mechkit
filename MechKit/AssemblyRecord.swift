@@ -54,6 +54,8 @@ struct PartRecord: Codable, Equatable, Identifiable, Sendable {
     var positionMeters = Vector3Record.zero
     /// Unit quaternion (x, y, z, w), rotating local coordinates into the assembly frame.
     var orientationLocalToAssembly = QuaternionRecord.identity
+    /// Unassigned parts have no mass result; density is never inferred.
+    var material: MaterialRecord? = nil
 
     func validate() throws {
         guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
@@ -68,6 +70,7 @@ struct PartRecord: Codable, Equatable, Identifiable, Sendable {
         guard positionMeters.isFinite else {
             throw AssemblyRecordError.invalidPart("Part positions must be finite values in meters.")
         }
+        if material != nil { _ = try massProperties }
         let q = orientationLocalToAssembly
         guard q.isFinite else {
             throw AssemblyRecordError.invalidPart(
@@ -77,6 +80,30 @@ struct PartRecord: Codable, Equatable, Identifiable, Sendable {
         guard abs(normSquared - 1) <= 1e-10 else {
             throw AssemblyRecordError.invalidPart("Part orientation must be a unit quaternion.")
         }
+    }
+}
+
+extension PartRecord {
+    /// Uniform solid-block properties about the local center of mass.
+    var massProperties: MassProperties? {
+        get throws {
+            guard let material else { return nil }
+            return try Component.calculateMassProperties(
+                geometry: Geometry(
+                    rectangularBlockDimensionsMeters: SIMD3(
+                        dimensionsMeters.x, dimensionsMeters.y, dimensionsMeters.z)),
+                material: material.physicsMaterial())
+        }
+    }
+}
+
+struct MaterialRecord: Codable, Equatable, Sendable {
+    var name: String
+    var densityKgPerCubicMeter: Double
+    var source: String
+
+    func physicsMaterial() throws -> Material {
+        try Material(name: name, densityKgPerCubicMeter: densityKgPerCubicMeter, source: source)
     }
 }
 
