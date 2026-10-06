@@ -34,6 +34,17 @@ press the new key combination, then press Enter to save it. Escape cancels.
 Changes persist across launches; conflicts with other view or app-menu shortcuts
 prevent saving.
 
+The **Parts** sidebar selects a block and highlights it in orange. Use the
+native toolbar to add or remove blocks, reset the camera, or show and hide the
+inspector. The sidebar toggle is in the window toolbar.
+
+The inspector edits the selected part’s name, full local X/Y/Z dimensions, and
+assembly-frame center position. All numeric fields are in meters. Press Return
+or **Apply** to commit the whole edit; **Revert** discards its draft. Invalid,
+non-finite, non-positive dimensions, or values outside the renderer’s numeric
+range display an error and leave the assembly unchanged. A loaded assembly that
+exceeds render precision reports which parts cannot be displayed.
+
 To build from Terminal:
 
 ```sh
@@ -52,4 +63,11 @@ To check shortcut recording and persistence in an isolated preferences domain:
 ```sh
 swiftc MechKit/CameraState.swift MechKit/ViewShortcuts.swift Checks/ShortcutChecks.swift -o /tmp/mechkit-shortcut-checks
 /tmp/mechkit-shortcut-checks
+```
+
+To check inspector drafts and the renderer's numeric boundary:
+
+```sh
+swiftc MechKit/AssemblyRecord.swift MechKit/PartEditing.swift Checks/EditingChecks.swift -o /tmp/mechkit-editing-checks
+/tmp/mechkit-editing-checks
 ```
