@@ -15,6 +15,12 @@
 		A10000000000000000000007 /* ViewShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000009 /* ViewShortcuts.swift */; };
 		A10000000000000000000008 /* WorkspaceCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000A /* WorkspaceCommands.swift */; };
 		A10000000000000000000009 /* ShortcutEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000B /* ShortcutEditor.swift */; };
+		A1000000000000000000000A /* PhysicsError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000C /* PhysicsError.swift */; };
+		A1000000000000000000000B /* Geometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000D /* Geometry.swift */; };
+		A1000000000000000000000C /* Material.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000E /* Material.swift */; };
+		A1000000000000000000000D /* Placement.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000F /* Placement.swift */; };
+		A1000000000000000000000E /* MassProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* MassProperties.swift */; };
+		A1000000000000000000000F /* Component.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000011 /* Component.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +35,12 @@
 		A20000000000000000000009 /* ViewShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewShortcuts.swift; sourceTree = "<group>"; };
 		A2000000000000000000000A /* WorkspaceCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceCommands.swift; sourceTree = "<group>"; };
 		A2000000000000000000000B /* ShortcutEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutEditor.swift; sourceTree = "<group>"; };
+		A2000000000000000000000C /* PhysicsError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhysicsError.swift; sourceTree = "<group>"; };
+		A2000000000000000000000D /* Geometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Geometry.swift; sourceTree = "<group>"; };
+		A2000000000000000000000E /* Material.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Material.swift; sourceTree = "<group>"; };
+		A2000000000000000000000F /* Placement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Placement.swift; sourceTree = "<group>"; };
+		A20000000000000000000010 /* MassProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MassProperties.swift; sourceTree = "<group>"; };
+		A20000000000000000000011 /* Component.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Component.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,7 +55,7 @@
 		};
 		A40000000000000000000002 /* MechKit */ = {
 			isa = PBXGroup;
-			children = (A20000000000000000000001 /* MechKitApp.swift */, A20000000000000000000002 /* ContentView.swift */, A20000000000000000000005 /* GroundGrid.swift */, A20000000000000000000006 /* CameraState.swift */, A20000000000000000000007 /* CameraInputSurface.swift */, A20000000000000000000008 /* CoordinateIndicator.swift */, A20000000000000000000009 /* ViewShortcuts.swift */, A2000000000000000000000A /* WorkspaceCommands.swift */, A2000000000000000000000B /* ShortcutEditor.swift */, A20000000000000000000003 /* MechKit.entitlements */);
+			children = (A20000000000000000000001 /* MechKitApp.swift */, A20000000000000000000002 /* ContentView.swift */, A20000000000000000000005 /* GroundGrid.swift */, A20000000000000000000006 /* CameraState.swift */, A20000000000000000000007 /* CameraInputSurface.swift */, A20000000000000000000008 /* CoordinateIndicator.swift */, A20000000000000000000009 /* ViewShortcuts.swift */, A2000000000000000000000A /* WorkspaceCommands.swift */, A2000000000000000000000B /* ShortcutEditor.swift */, A20000000000000000000003 /* MechKit.entitlements */, A40000000000000000000004 /* Physics */);
 			path = MechKit;
 			sourceTree = "<group>";
 		};
@@ -51,6 +63,12 @@
 			isa = PBXGroup;
 			children = (A20000000000000000000004 /* MechKit.app */);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000004 /* Physics */ = {
+			isa = PBXGroup;
+			children = (A2000000000000000000000C /* PhysicsError.swift */, A2000000000000000000000D /* Geometry.swift */, A2000000000000000000000E /* Material.swift */, A2000000000000000000000F /* Placement.swift */, A20000000000000000000010 /* MassProperties.swift */, A20000000000000000000011 /* Component.swift */);
+			path = Physics;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -99,7 +117,7 @@
 		A70000000000000000000001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
-			files = (A10000000000000000000001 /* MechKitApp.swift in Sources */, A10000000000000000000002 /* ContentView.swift in Sources */, A10000000000000000000003 /* GroundGrid.swift in Sources */, A10000000000000000000004 /* CameraState.swift in Sources */, A10000000000000000000005 /* CameraInputSurface.swift in Sources */, A10000000000000000000006 /* CoordinateIndicator.swift in Sources */, A10000000000000000000007 /* ViewShortcuts.swift in Sources */, A10000000000000000000008 /* WorkspaceCommands.swift in Sources */, A10000000000000000000009 /* ShortcutEditor.swift in Sources */);
+			files = (A10000000000000000000001 /* MechKitApp.swift in Sources */, A10000000000000000000002 /* ContentView.swift in Sources */, A10000000000000000000003 /* GroundGrid.swift in Sources */, A10000000000000000000004 /* CameraState.swift in Sources */, A10000000000000000000005 /* CameraInputSurface.swift in Sources */, A10000000000000000000006 /* CoordinateIndicator.swift in Sources */, A10000000000000000000007 /* ViewShortcuts.swift in Sources */, A10000000000000000000008 /* WorkspaceCommands.swift in Sources */, A10000000000000000000009 /* ShortcutEditor.swift in Sources */, A1000000000000000000000A /* PhysicsError.swift in Sources */, A1000000000000000000000B /* Geometry.swift in Sources */, A1000000000000000000000C /* Material.swift in Sources */, A1000000000000000000000D /* Placement.swift in Sources */, A1000000000000000000000E /* MassProperties.swift in Sources */, A1000000000000000000000F /* Component.swift in Sources */);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
